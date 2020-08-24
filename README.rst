@@ -45,5 +45,5 @@ Options
 * **-i**, **--input**: Specifies the path to an input PDF.  Must be specified twice.
 * **-o**, **--output**: Specifies the output directory to save the diffs.  Must exist.
 * **-e**, **--exclude-matching**:  Specifies whether or not pages that are an exact match will be saved out.
-* **-q**, **--quite**: Turns off all logging to command line.
+* **-q**, **--quiet**: Turns off all logging to command line.
 * **-v**, **--verbose**: Enables different levels of logging verboseness.  Once turns on "Extra Info" mode.  Twice turns on "Debug" mode.
