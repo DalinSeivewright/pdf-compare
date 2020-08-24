@@ -8,11 +8,11 @@ Diffs are saved as PNGs.  Diffs are comprised of two colors: Black and Red.  Bla
 Install Dependencies
 ------------
 Install **poppler**
-*macOs*
+**macOs**
 ::
   brew install poppler
 
-*Ubuntu*
+**Ubuntu**
 Poppler may already be packaged with your distribution.
 ::
   apt-get install poppler-utils
