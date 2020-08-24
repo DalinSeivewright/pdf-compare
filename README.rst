@@ -5,8 +5,20 @@ The diffs are saved out to the specified output directory prefixed with a random
 Diffs are saved as PNGs.  Diffs are comprised of two colors: Black and Red.  Black represents pixels that match between the PDF page.  Red represents pixels that do not match between the PDF page.  If one PDFs page count exceeds the other, all diffs from the rest of the pages will be entirely red.
 
 
-Installation (Recommended)
+Install Dependencies
 ------------
+Install **poppler**
+*macOs*
+::
+  brew install poppler
+
+*Ubuntu*
+Poppler may already be packaged with your distribution.
+::
+  apt-get install poppler-utils
+
+Install via Pipenv
+-------
 Install **pipenv**:
 ::
    pip3 install --user pipenv
@@ -14,6 +26,12 @@ Install **pipenv**:
 Install **pdf-compare**:
 ::
    pipenv install git+https://github.com/DalinSeivewright/pdf-compare.git#egg=pdf-compare
+
+Install via pip3
+----------------
+Install **pdf-compare**:
+::
+   pip3 install git+https://github.com/DalinSeivewright/pdf-compare.git#egg=pdf-compare
 
 
 Usage
