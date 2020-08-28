@@ -6,33 +6,38 @@ Diffs are saved as PNGs.  Diffs are comprised of two colors: Black and Red.  Bla
 
 
 Install Dependencies
-------------
+--------------------
 Install **poppler**
 
 **macOs**
 ::
-  brew install poppler
+
+    brew install poppler
 
 **Ubuntu**
 
 Poppler may already be packaged with your distribution.
 ::
+
   apt-get install poppler-utils
 
 Install via Pipenv
--------
+------------------
 Install **pipenv**:
 ::
+
    pip3 install --user pipenv
 
 Install **pdf-compare**:
 ::
+
    pipenv install git+https://github.com/DalinSeivewright/pdf-compare.git#egg=pdf-compare
 
 Install via pip3
 ----------------
 Install **pdf-compare**:
 ::
+
    pip3 install git+https://github.com/DalinSeivewright/pdf-compare.git#egg=pdf-compare
 
 
@@ -40,6 +45,7 @@ Usage
 -----
 PDF Compare is run with:
 ::
+
    pdf-compare.py [options]
 
 Options
@@ -49,3 +55,6 @@ Options
 * **-e**, **--exclude-matching**:  Specifies whether or not pages that are an exact match will be saved out.
 * **-q**, **--quiet**: Turns off all logging to command line.
 * **-v**, **--verbose**: Enables different levels of logging verboseness.  Once turns on "Extra Info" mode.  Twice turns on "Debug" mode.
+* **-f**, **--input-format**: The internal storage representation of the PDFs.  Can affect quality and memory footprint while the PDF is being processed.  Defaults to **png**. (PPM takes quite a bit of memory!)
+* **-s**, **--output-format**: While actually a string used as the delta image file extension, this will be detected by Pillow a correct output format based on this extension will be selected.  Defaults to **png**.
+* **-d**, **--input-dpi**:  Controls what DPI the PDFs are to be loaded in as.  Defaults to **200**.

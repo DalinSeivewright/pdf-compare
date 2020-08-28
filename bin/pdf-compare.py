@@ -13,6 +13,9 @@ OUTPUT_DIR_SETTING = 'output-dir'
 EXCLUDE_MATCHING_SETTING = 'exclude-matching'
 QUIET_MODE_SETTING = 'quiet'
 VERBOSE_SETTING = 'verbose'
+INPUT_FORMAT_SETTING = 'input-format'
+OUTPUT_FORMAT_SETTING = 'output-format'
+INPUT_DPI_SETTING = 'input-dpi'
 PREFIX_SIZE = 6
 VERBOSE_VALUE = 0
 QUIET_MODE = False
@@ -21,11 +24,12 @@ QUIET_MODE = False
 def main():
     settings = get_parameters()
     validate_settings(settings)
+    default_settings(settings)
     debug(settings)
-# TODO Enhance this to support N Pdf comparing although I am not sure how useful that would be
     extra_info("Loading Inputs...")
-    source_pdf_a = convert_from_bytes(open(settings[INPUT_SETTING][0], 'rb').read())
-    source_pdf_b = convert_from_bytes(open(settings[INPUT_SETTING][1], 'rb').read())
+    source_pdf_a = load_source(settings[INPUT_SETTING][0], settings[INPUT_DPI_SETTING], settings[INPUT_FORMAT_SETTING])
+    source_pdf_b = load_source(settings[INPUT_SETTING][1], settings[INPUT_DPI_SETTING], settings[INPUT_FORMAT_SETTING])
+
     debug_print_pdf_info([source_pdf_a, source_pdf_b])
 
     extra_info("Determining minimum size needed for diff images...")
@@ -40,6 +44,7 @@ def main():
                                     source_pdf_a,
                                     source_pdf_b,
                                     settings[OUTPUT_DIR_SETTING],
+                                    settings[OUTPUT_FORMAT_SETTING],
                                     settings[EXCLUDE_MATCHING_SETTING])
     info('Compare Completed.  Prefix:  ' + diff_file_prefix + ".  " + str(differences) + ' page difference(s) detected.')
 
@@ -51,6 +56,9 @@ def get_parameters():
     arg_parser.add_argument('-e', '--exclude-matching', action='store_true', dest=EXCLUDE_MATCHING_SETTING)
     arg_parser.add_argument('-q', '--quiet', action='store_true', dest=QUIET_MODE_SETTING)
     arg_parser.add_argument('-v', '--verbose', action='count', default=0, dest=VERBOSE_SETTING)
+    arg_parser.add_argument('-f', '--input-format', action='store', dest=INPUT_FORMAT_SETTING)
+    arg_parser.add_argument('-s', '--output-format', action='store', dest=OUTPUT_FORMAT_SETTING)
+    arg_parser.add_argument('-d', '--input-dpi', action='store', type=int, dest=INPUT_DPI_SETTING)
     return vars(arg_parser.parse_args())
 
 
@@ -68,6 +76,21 @@ def validate_settings(settings):
     QUIET_MODE = settings[QUIET_MODE_SETTING]
 
 
+def default_settings(settings):
+    if settings[INPUT_DPI_SETTING] is None:
+        settings[INPUT_DPI_SETTING] = 200
+
+    if settings[INPUT_FORMAT_SETTING] is None:
+        settings[INPUT_FORMAT_SETTING] = 'png'
+
+    if settings[OUTPUT_FORMAT_SETTING] is None:
+        settings[OUTPUT_FORMAT_SETTING] = 'png'
+
+
+def load_source(input_path, dpi, fmt):
+    return convert_from_bytes(open(input_path, 'rb').read(), dpi=dpi, fmt=fmt)
+
+
 def debug_print_pdf_info(sources):
     if not is_debug_mode(VERBOSE_VALUE):
         return
@@ -80,7 +103,6 @@ def debug_print_pdf_info(sources):
         for page in pdf:
             debug("Page " + str(page_index), page.format, page.size, page.mode)
             page_index = page_index + 1
-        print("")
         pdf_index = pdf_index + 1
 
 
@@ -105,7 +127,7 @@ def generate_filename_prefix():
     return prefix
 
 
-def generate_pdf_diff(prefix, pages, page_size, source_pdf_a, source_pdf_b, output_dir, exclude_matching):
+def generate_pdf_diff(prefix, pages, page_size, source_pdf_a, source_pdf_b, output_dir, fmt, exclude_matching):
     differences = 0
     for page in range(0, pages):
         extra_info("Processing Page " + str(page) + "...")
@@ -116,7 +138,7 @@ def generate_pdf_diff(prefix, pages, page_size, source_pdf_a, source_pdf_b, outp
         if not differences_detected and exclude_matching:
             extra_info('Skipping save of page ' + str(page + 1) + ' because sources match.')
             continue
-        image_path = path.join(output_dir, prefix + '_page' + str(page + 1) + '.png')
+        image_path = path.join(output_dir, prefix + '_page' + str(page + 1) + '.' + fmt)
         delta_image.save(image_path)
         extra_info('Saved page ' + str(page + 1) + ' delta to ' + image_path)
         if differences_detected:
